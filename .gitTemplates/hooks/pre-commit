@@ -1,0 +1,21 @@
+#!/bin/sh
+
+echo "🔍 Running ESLint on staged files..."
+
+# Find staged .js, .jsx, .ts, .tsx files
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|jsx|ts|tsx)$')
+
+if [ -z "$FILES" ]; then
+  echo "No JavaScript/TypeScript files to lint."
+  exit 0
+fi
+
+# Run ESLint
+npx eslint $FILES
+
+if [ $? -ne 0 ]; then
+  echo "Lint errors detected. Push aborted."
+  exit 1
+fi
+
+echo "Lint passed. Proceeding with push."
